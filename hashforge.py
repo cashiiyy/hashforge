@@ -4,6 +4,10 @@ import json
 import os
 import sys
 
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import Prompt
+
 from hashforge.config import load_config
 from hashforge.profile.models import Profile
 from hashforge.hashcat.discovery import discover_rule_files, format_rules_table
@@ -12,27 +16,22 @@ from hashforge.profile.wizard import run_profile_wizard
 
 __version__ = "4.0.0-hashforge"
 
-CYAN = "\033[96m"
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-RED = "\033[91m"
-RESET = "\033[0m"
-BOLD = "\033[1m"
+console = Console()
 
 def print_banner() -> None:
-    banner = f"""{CYAN}
+    banner_text = """[bold cyan]
 ╔══════════════════════════════════════╗
-║             {BOLD}HASHFORGE{RESET}{CYAN}                ║
+║             HASHFORGE                ║
 ║ Profile-Driven Wordlist Generator    ║
-╚══════════════════════════════════════╝{RESET}"""
-    print(banner)
-
+╚══════════════════════════════════════╝
+[/bold cyan]"""
+    console.print(banner_text)
 
 def interactive_main():
     print_banner()
-    print(f"\n{YELLOW}[1]{RESET} Build profile\n{YELLOW}[2]{RESET} Load profile\n{YELLOW}[3]{RESET} Exit\n")
+    console.print("\n[yellow][1][/yellow] Build profile\n[yellow][2][/yellow] Load profile\n[yellow][3][/yellow] Exit\n")
     try:
-        choice = input(f"{YELLOW}>{RESET} ").strip()
+        choice = Prompt.ask("[yellow]>[/yellow]", default="").strip()
     except (EOFError, KeyboardInterrupt):
         sys.exit(0)
         
@@ -40,12 +39,12 @@ def interactive_main():
     if choice == "1":
         profile_obj = run_profile_wizard()
     elif choice == "2":
-        path = input(f"Enter profile JSON path: ").strip()
+        path = Prompt.ask("Enter profile JSON path").strip()
         if os.path.isfile(path):
             with open(path, "r", encoding="utf-8") as f:
                 profile_obj = Profile.from_dict(json.load(f))
         else:
-            print(f"{RED}File not found.{RESET}")
+            console.print("[red]File not found.[/red]")
             sys.exit(1)
     else:
         sys.exit(0)
@@ -64,9 +63,6 @@ def interactive_main():
     )
 
 def main() -> None:
-    # Initialize ANSI escape sequences on Windows
-    os.system("")
-    
     if len(sys.argv) == 1:
         interactive_main()
     else:

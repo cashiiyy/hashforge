@@ -2,77 +2,61 @@
 
 import sys
 from typing import Optional
+from rich.console import Console
+from rich.prompt import Prompt, Confirm
+from rich.panel import Panel
+from rich.text import Text
 from .models import Profile
 
-CYAN = "\033[96m"
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-RED = "\033[91m"
-RESET = "\033[0m"
-BOLD = "\033[1m"
-
-def _safe_input(prompt: str, default: str = "") -> str:
-    try:
-        val = input(prompt)
-        return val.strip()
-    except (EOFError, KeyboardInterrupt):
-        return default
-
-def _ask_yes_no(prompt: str, default: bool = False) -> bool:
-    default_str = "Y/n" if default else "y/N"
-    full_prompt = f"{prompt} [{YELLOW}{default_str}{RESET}]: "
-    ans = _safe_input(full_prompt).lower()
-    if not ans:
-        return default
-    return ans in ("y", "yes", "1", "true")
+console = Console()
 
 def run_profile_wizard(show_banner: bool = True) -> Profile:
-    print(f"\n{BOLD}{CYAN}TARGET PROFILE{RESET}")
-    print(f"{CYAN}=============={RESET}\n")
+    if show_banner:
+        console.print(Panel("[bold cyan]TARGET PROFILE[/bold cyan]", border_style="cyan"))
 
-    first_name = _safe_input("First name: ")
-    last_name = _safe_input("Last name: ")
-    nickname = _safe_input("Nickname: ")
-    username = _safe_input("Username: ")
-    print("")
-    partner_name = _safe_input("Partner name: ")
-    partner_nickname = _safe_input("Partner nickname: ")
-    print("")
-    child_name = _safe_input("Child name: ")
-    pet_name = _safe_input("Pet name: ")
-    print("")
-    company = _safe_input("Company: ")
-    org = _safe_input("Organization: ")
-    school = _safe_input("School: ")
-    college = _safe_input("College: ")
-    print("")
-    city = _safe_input("City: ")
-    country = _safe_input("Country: ")
-    location = _safe_input("Location: ")
-    print("")
-    ssid = _safe_input("SSID: ")
-    print("")
-    sports = _safe_input("Favorite sports: ")
-    teams = _safe_input("Favorite teams: ")
-    print("")
-    games = _safe_input("Favorite games: ")
-    movies = _safe_input("Favorite movies: ")
-    shows = _safe_input("Favorite shows: ")
-    music = _safe_input("Favorite music/artists: ")
-    print("")
-    hobbies = _safe_input("Hobbies: ")
-    tech = _safe_input("Technologies: ")
-    lang = _safe_input("Programming languages: ")
-    print("")
-    projects = _safe_input("Projects: ")
-    brands = _safe_input("Brands: ")
-    products = _safe_input("Products: ")
-    print("")
-    dates = _safe_input("Important dates: ")
-    years = _safe_input("Important years: ")
-    print("")
-    print("Enter additional keywords separated by commas:")
-    other_keywords = _safe_input(f"{YELLOW}>{RESET} ")
+    first_name = Prompt.ask("[yellow]First name[/yellow]", default="").strip()
+    last_name = Prompt.ask("[yellow]Last name[/yellow]", default="").strip()
+    nickname = Prompt.ask("[yellow]Nickname[/yellow]", default="").strip()
+    username = Prompt.ask("[yellow]Username[/yellow]", default="").strip()
+    console.print("")
+    partner_name = Prompt.ask("[yellow]Partner name[/yellow]", default="").strip()
+    partner_nickname = Prompt.ask("[yellow]Partner nickname[/yellow]", default="").strip()
+    console.print("")
+    child_name = Prompt.ask("[yellow]Child name[/yellow]", default="").strip()
+    pet_name = Prompt.ask("[yellow]Pet name[/yellow]", default="").strip()
+    console.print("")
+    company = Prompt.ask("[yellow]Company[/yellow]", default="").strip()
+    org = Prompt.ask("[yellow]Organization[/yellow]", default="").strip()
+    school = Prompt.ask("[yellow]School[/yellow]", default="").strip()
+    college = Prompt.ask("[yellow]College[/yellow]", default="").strip()
+    console.print("")
+    city = Prompt.ask("[yellow]City[/yellow]", default="").strip()
+    country = Prompt.ask("[yellow]Country[/yellow]", default="").strip()
+    location = Prompt.ask("[yellow]Location[/yellow]", default="").strip()
+    console.print("")
+    ssid = Prompt.ask("[yellow]SSID[/yellow]", default="").strip()
+    console.print("")
+    sports = Prompt.ask("[yellow]Favorite sports[/yellow]", default="").strip()
+    teams = Prompt.ask("[yellow]Favorite teams[/yellow]", default="").strip()
+    console.print("")
+    games = Prompt.ask("[yellow]Favorite games[/yellow]", default="").strip()
+    movies = Prompt.ask("[yellow]Favorite movies[/yellow]", default="").strip()
+    shows = Prompt.ask("[yellow]Favorite shows[/yellow]", default="").strip()
+    music = Prompt.ask("[yellow]Favorite music/artists[/yellow]", default="").strip()
+    console.print("")
+    hobbies = Prompt.ask("[yellow]Hobbies[/yellow]", default="").strip()
+    tech = Prompt.ask("[yellow]Technologies[/yellow]", default="").strip()
+    lang = Prompt.ask("[yellow]Programming languages[/yellow]", default="").strip()
+    console.print("")
+    projects = Prompt.ask("[yellow]Projects[/yellow]", default="").strip()
+    brands = Prompt.ask("[yellow]Brands[/yellow]", default="").strip()
+    products = Prompt.ask("[yellow]Products[/yellow]", default="").strip()
+    console.print("")
+    dates = Prompt.ask("[yellow]Important dates[/yellow]", default="").strip()
+    years = Prompt.ask("[yellow]Important years[/yellow]", default="").strip()
+    console.print("")
+    console.print("[bold]Enter additional keywords separated by commas:[/bold]")
+    other_keywords = Prompt.ask("[yellow]>[/yellow]", default="").strip()
 
     # Aggregate fields
     words_list = []
@@ -102,19 +86,19 @@ def run_profile_wizard(show_banner: bool = True) -> Profile:
     yrs_count = sum(1 for x in yrs if x)
     custom_count = len(custom_words)
 
-    print(f"\n{BOLD}{CYAN}PROFILE SUMMARY{RESET}")
-    print(f"{CYAN}==============={RESET}\n")
-    print(f"Names:          {YELLOW}{names_count}{RESET}")
-    print(f"Organizations:  {YELLOW}{orgs_count}{RESET}")
-    print(f"Locations:      {YELLOW}{locs_count}{RESET}")
-    print(f"Interests:      {YELLOW}{ints_count}{RESET}")
-    print(f"Technologies:   {YELLOW}{techs_count}{RESET}")
-    print(f"Projects:       {YELLOW}{projs_count}{RESET}")
-    print(f"Years:          {YELLOW}{yrs_count}{RESET}")
-    print(f"Custom words:   {YELLOW}{custom_count}{RESET}")
-    print("")
+    summary_text = (
+        f"Names:          [green]{names_count}[/green]\n"
+        f"Organizations:  [green]{orgs_count}[/green]\n"
+        f"Locations:      [green]{locs_count}[/green]\n"
+        f"Interests:      [green]{ints_count}[/green]\n"
+        f"Technologies:   [green]{techs_count}[/green]\n"
+        f"Projects:       [green]{projs_count}[/green]\n"
+        f"Years:          [green]{yrs_count}[/green]\n"
+        f"Custom words:   [green]{custom_count}[/green]"
+    )
+    console.print(Panel(summary_text, title="[bold cyan]PROFILE SUMMARY[/bold cyan]", border_style="cyan"))
     
-    if not _ask_yes_no("Continue?", default=True):
+    if not Confirm.ask("Continue?", default=True):
         return run_profile_wizard(show_banner=False)
 
     return Profile(
