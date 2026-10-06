@@ -2,7 +2,7 @@
 #
 #  [Program]
 #
-#  CUPP - Common User Passwords Profiler
+#  HashForge - Common User Passwords Profiler
 #
 #  [Author]
 #
@@ -30,13 +30,13 @@ import os
 import unittest
 from unittest.mock import patch
 
-from cupp import *
+from hashforge import *
 
 
 class TestCupp(unittest.TestCase):
     def setUp(self):
 
-        read_config("cupp.cfg")
+        read_config("hashforge.cfg")
 
     def test_config(self):
 
@@ -62,7 +62,7 @@ class TestCupp(unittest.TestCase):
             "leetmode": "y",
             "spechars": [],
         }
-        read_config("cupp.cfg")
+        read_config("hashforge.cfg")
         generate_wordlist_from_profile(profile)
 
     def test_parser(self):
@@ -93,15 +93,16 @@ class TestCupp(unittest.TestCase):
     def test_improve_dictionary(self):
 
         filename = "improveme.txt"
-        open(filename, "a").write("password123\n2018password\npassword\n")
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write("password123\n2018password\npassword\n")
 
-        __builtins__.input = lambda _: "Y"  # Mock
-        improve_dictionary(filename)
+        with patch("builtins.input", return_value="Y"):
+            improve_dictionary(filename)
 
     def test_download_wordlist(self):
         """ Download wordlists via menu """
-        __builtins__.input = lambda _: "31"  # Mock
-        download_wordlist()
+        with patch("builtins.input", return_value="31"):
+            download_wordlist()
         filename = "dictionaries/russian/russian.lst.gz"
         self.assertTrue(os.path.isfile(filename), "file " + filename + "exists")
 
@@ -140,14 +141,16 @@ class TestCupp(unittest.TestCase):
             stacks = interactive()
 
         if os.path.isfile(expected_filename):
-            if string_to_test in open(expected_filename).read():
-                test_ok = True
+            with open(expected_filename, "r", encoding="utf-8", errors="replace") as f:
+                if string_to_test in f.read():
+                    test_ok = True
 
         self.assertTrue(test_ok, "interactive generation works")
 
     def test_main(self):
         """ test run for the main function """
-        main()
+        with patch("sys.argv", ["hashforge.py", "-v"]):
+            main()
 
 
 if __name__ == "__main__":

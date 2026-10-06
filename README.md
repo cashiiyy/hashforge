@@ -1,8 +1,8 @@
-# CUPP - Common User Passwords Profiler
+# HashForge - Common User Passwords Profiler
 
-[![Build Status](https://travis-ci.org/Mebus/cupp.svg?branch=master)](https://travis-ci.org/Mebus/cupp)
-[![Coverage Status](https://coveralls.io/repos/github/Mebus/cupp/badge.svg)](https://coveralls.io/github/Mebus/cupp)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/be081b6a20b043ce9d79fd3d48b40009)](https://app.codacy.com/gh/Mebus/cupp/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Build Status](https://travis-ci.org/Mebus/hashforge.svg?branch=master)](https://travis-ci.org/Mebus/hashforge)
+[![Coverage Status](https://coveralls.io/repos/github/Mebus/hashforge/badge.svg)](https://coveralls.io/github/Mebus/hashforge)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/be081b6a20b043ce9d79fd3d48b40009)](https://app.codacy.com/gh/Mebus/hashforge/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Rawsec's CyberSecurity Inventory](https://inventory.raw.pm/img/badges/Rawsec-inventoried-FF5050_plastic.svg)](https://inventory.raw.pm/)
 
  
@@ -20,23 +20,23 @@
   guessed by someone profiling the user, such as a birthday, nickname, address,
   name of a pet or relative, or a common word such as God, love, money or password.
 
-  That is why CUPP was born, and it can be used in situations like legal
+  That is why HashForge was born, and it can be used in situations like legal
   penetration tests or forensic crime investigations.
 
 
 Requirements
 ------------
 
-You need Python 3 to run CUPP.
+You need Python 3 to run HashForge.
 
 Quick start
 -----------
 
-    $ python3 cupp.py -h
+    $ python3 hashforge.py -h
 
 ## Options
 
-  Usage: cupp.py [OPTIONS]
+  Usage: hashforge.py [OPTIONS]
 
         -h      this menu
 
@@ -56,11 +56,11 @@ Quick start
 
 ## Configuration
 
-   CUPP has configuration file cupp.cfg with instructions.
+   HashForge has configuration file hashforge.cfg with instructions.
 
 ## Example (Fast forwarded)
 
-![cupp-example](screenshots/cupp-example.gif)
+![hashforge-example](screenshots/hashforge-example.gif)
 
 ## License
 
@@ -82,8 +82,8 @@ Quick start
 
 ## Github import
 
-This project was imported into https://github.com/Mebus/cupp by Mebus from:  
-http://www.remote-exploit.org/content/cupp-3.0.tar.gz  
+This project was imported into https://github.com/Mebus/hashforge by Mebus from:  
+http://www.remote-exploit.org/content/hashforge-3.0.tar.gz  
 http://www.remote-exploit.org/articles/misc_research__amp_code/index.html  
 to encourage further development of the tool.
 

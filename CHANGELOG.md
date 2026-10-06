@@ -1,11 +1,11 @@
-# Changelog of CUPP
+# Changelog of HashForge
 
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.2.0-alpha
 
- - ran 2to3 on cupp.py to make it Python3 compatible
+ - ran 2to3 on hashforge.py to make it Python3 compatible
 
 ## 3.1.0-alpha
  - added Python3 port
@@ -24,7 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
  - added l33t mode
  - added char mode
  - ability to make pwnsauce with other wordlists or wyd.pl outputs
- - cupp.cfg makes cupp.py easier to configure 
+ - hashforge.cfg makes hashforge.py easier to configure 
 
 
 ## 1.0.0
