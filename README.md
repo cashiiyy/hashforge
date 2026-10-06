@@ -93,11 +93,11 @@ to encourage further development of the tool.
 
 ## Contributors
 
-  * Bosko Petrovic aka bolexxx  
-  bole_loser@hotmail.com  
-  http://www.offensive-security.com  
-  http://www.bolexxx.net  
 
   * Mebus  
     https://github.com/Mebus/
 
+## Tools
+
+  * https://hashcat.net/cap2hashcat/
+  * https://hashcat.net/files/hashcat-7.1.2.7z
