@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-"""HashForge - Defensive Security Laboratory Candidate Dataset & Password Profiling Suite.
-
-Derived from HashForge (Common User Passwords Profiler) with modernized architecture,
-Hashcat mutation rule engine, search-space estimation, and streaming I/O.
-"""
-
 import argparse
 import json
 import os
@@ -14,152 +8,97 @@ from hashforge.config import load_config
 from hashforge.profile.models import Profile
 from hashforge.hashcat.discovery import discover_rule_files, format_rules_table
 from hashforge.pipeline import run_hashforge_pipeline
+from hashforge.profile.wizard import run_profile_wizard
 
 __version__ = "4.0.0-hashforge"
 
+CYAN = "\033[96m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+RED = "\033[91m"
+RESET = "\033[0m"
+BOLD = "\033[1m"
 
 def print_banner() -> None:
-    banner = r"""
-  _    _           _     ______                 
- | |  | |         | |   |  ____|                
- | |__| | __ _ ___| |__ | |__ ___  _ __ __ _  ___ 
- |  __  |/ _` / __| '_ \|  __/ _ \| '__/ _` |/ _ \
- | |  | | (_| \__ \ | | | | | (_) | | | (_| |  __/
- |_|  |_|\__,_|___/_| |_|_|  \___/|_|  \__, |\___|
-                                        __/ |     
-   Defensive Laboratory Password Profiler|___/     v""" + __version__
+    banner = f"""{CYAN}
+╔══════════════════════════════════════╗
+║             {BOLD}HASHFORGE{RESET}{CYAN}                ║
+║ Profile-Driven Wordlist Generator    ║
+╚══════════════════════════════════════╝{RESET}"""
     print(banner)
-    print("=" * 70)
 
 
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        prog="hashforge",
-        description="HashForge: Defensive Laboratory Profile-Based Candidate Dataset Generator",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  Interactive terminal wizard (primary UX):
-    python hashforge.py
-
-  Direct transformation with dry-run estimation:
-    python hashforge.py --rule best66.rule --dry-run
-
-  Batch generation from synthetic profile JSON:
-    python hashforge.py --profile test_profile.json -r top10_2025.rule -o output/test.txt
-
-  Discover available rule transformations:
-    python hashforge.py --list-rules
-        """,
+def interactive_main():
+    print_banner()
+    print(f"\n{YELLOW}[1]{RESET} Build profile\n{YELLOW}[2]{RESET} Load profile\n{YELLOW}[3]{RESET} Exit\n")
+    try:
+        choice = input(f"{YELLOW}>{RESET} ").strip()
+    except (EOFError, KeyboardInterrupt):
+        sys.exit(0)
+        
+    profile_obj = None
+    if choice == "1":
+        profile_obj = run_profile_wizard()
+    elif choice == "2":
+        path = input(f"Enter profile JSON path: ").strip()
+        if os.path.isfile(path):
+            with open(path, "r", encoding="utf-8") as f:
+                profile_obj = Profile.from_dict(json.load(f))
+        else:
+            print(f"{RED}File not found.{RESET}")
+            sys.exit(1)
+    else:
+        sys.exit(0)
+        
+    run_hashforge_pipeline(
+        profile=profile_obj,
+        rule_path=None,
+        output_path=os.path.join("output", "hashforge_wordlist.txt"),
+        rules_dir="rules",
+        dry_run=False,
+        min_len=None,
+        max_len=None,
+        max_candidates=10000000,
+        interactive=True,
+        config=load_config("hashforge.cfg"),
     )
-
-    parser.add_argument(
-        "-i", "--interactive",
-        action="store_true",
-        default=False,
-        help="Run interactive profile wizard (default when no profile file provided)",
-    )
-    parser.add_argument(
-        "-p", "--profile",
-        metavar="FILE",
-        help="Path to JSON file containing synthetic profile data",
-    )
-    parser.add_argument(
-        "-r", "--rule",
-        metavar="RULE",
-        help="Transformation rule filename or path (e.g. best66.rule)",
-    )
-    parser.add_argument(
-        "--list-rules",
-        action="store_true",
-        help="Discover and display available transformation profiles under rules/ directory",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Perform dry-run: calculate base candidate count and estimate search-space without writing output",
-    )
-    parser.add_argument(
-        "-o", "--output",
-        metavar="FILE",
-        default=os.path.join("output", "hashforge_wordlist.txt"),
-        help="Destination path for resulting UTF-8 wordlist (default: output/hashforge_wordlist.txt)",
-    )
-    parser.add_argument(
-        "--rules-dir",
-        metavar="DIR",
-        default="rules",
-        help="Directory containing Hashcat transformation .rule files (default: rules)",
-    )
-    parser.add_argument(
-        "--min-len",
-        type=int,
-        metavar="N",
-        help="Minimum candidate word length filter",
-    )
-    parser.add_argument(
-        "--max-len",
-        type=int,
-        metavar="N",
-        help="Maximum candidate word length filter",
-    )
-    parser.add_argument(
-        "--max-candidates",
-        type=int,
-        metavar="N",
-        default=500000,
-        help="Hard safety bound on maximum unique candidates to generate (default: 500,000)",
-    )
-    parser.add_argument(
-        "-c", "--config",
-        metavar="FILE",
-        default="hashforge.cfg",
-        help="Configuration file (default: hashforge.cfg)",
-    )
-    parser.add_argument(
-        "-q", "--quiet",
-        action="store_true",
-        help="Quiet mode: suppress startup banner",
-    )
-    parser.add_argument(
-        "-v", "--version",
-        action="store_true",
-        help="Show program version and exit",
-    )
-
-    return parser
-
 
 def main() -> None:
-    parser = build_parser()
-    args = parser.parse_args()
+    # Initialize ANSI escape sequences on Windows
+    os.system("")
+    
+    if len(sys.argv) == 1:
+        interactive_main()
+    else:
+        parser = argparse.ArgumentParser(prog="hashforge")
+        parser.add_argument("-i", "--interactive", action="store_true", default=False)
+        parser.add_argument("-p", "--profile", metavar="FILE")
+        parser.add_argument("-r", "--rule", metavar="RULE")
+        parser.add_argument("--list-rules", action="store_true")
+        parser.add_argument("--dry-run", action="store_true")
+        parser.add_argument("-o", "--output", default=os.path.join("output", "hashforge_wordlist.txt"))
+        parser.add_argument("--rules-dir", default="rules")
+        parser.add_argument("--min-len", type=int)
+        parser.add_argument("--max-len", type=int)
+        parser.add_argument("--max-candidates", type=int, default=10000000)
+        parser.add_argument("-c", "--config", default="hashforge.cfg")
+        parser.add_argument("-q", "--quiet", action="store_true")
+        args = parser.parse_args()
+        
+        if args.list_rules:
+            rules_found = discover_rule_files(args.rules_dir)
+            print(format_rules_table(rules_found))
+            sys.exit(0)
 
-    if args.version:
-        print(f"HashForge {__version__} (HashForge Modernized Engine)")
-        sys.exit(0)
+        profile_obj = None
+        if args.profile:
+            with open(args.profile, "r", encoding="utf-8") as pf:
+                profile_obj = Profile.from_dict(json.load(pf))
 
-    if not args.quiet:
-        print_banner()
+        if args.interactive or profile_obj is None:
+            interactive_main()
+            return
 
-    config = load_config(args.config)
-
-    if args.list_rules:
-        rules_found = discover_rule_files(args.rules_dir)
-        print(format_rules_table(rules_found))
-        sys.exit(0)
-
-    # Load profile if JSON specified
-    profile_obj = None
-    if args.profile:
-        if not os.path.isfile(args.profile):
-            print(f"[-] Profile file not found: {args.profile}")
-            sys.exit(1)
-        with open(args.profile, "r", encoding="utf-8") as pf:
-            profile_data = json.load(pf)
-        profile_obj = Profile.from_dict(profile_data)
-
-    # Run the HashForge pipeline
-    try:
         run_hashforge_pipeline(
             profile=profile_obj,
             rule_path=args.rule,
@@ -169,13 +108,9 @@ def main() -> None:
             min_len=args.min_len,
             max_len=args.max_len,
             max_candidates=args.max_candidates,
-            interactive=(profile_obj is None),
-            config=config,
+            interactive=False,
+            config=load_config(args.config),
         )
-    except KeyboardInterrupt:
-        print("\n[-] Operation cancelled by user.")
-        sys.exit(130)
-
 
 if __name__ == "__main__":
     main()
