@@ -58,9 +58,6 @@ Quick start
 
    HashForge has configuration file hashforge.cfg with instructions.
 
-## Example (Fast forwarded)
-
-![hashforge-example](screenshots/hashforge-example.gif)
 
 ## License
 
@@ -82,15 +79,14 @@ Quick start
 
 ## Github import
 
-This project was imported into https://github.com/Mebus/hashforge by Mebus from:  
+This project was imported into https://github.com/Mebus/cupp by Mebus from:  
 http://www.remote-exploit.org/content/hashforge-3.0.tar.gz  
 http://www.remote-exploit.org/articles/misc_research__amp_code/index.html  
 to encourage further development of the tool.
 
 ## Original author
 
-  Muris Kurgas aka j0rgan  
-  j0rgan@remote-exploit.org  
+  Muris Kurgas aka j0rgan
   http://www.remote-exploit.org  
   http://www.azuzi.me  
 
@@ -103,15 +99,5 @@ to encourage further development of the tool.
   http://www.bolexxx.net  
 
   * Mebus  
-    https://github.com/Mebus/  
-
-  * Abhro  
-    https://github.com/Abhro/  
-
-  * Andrea Giacomo  
-    https://github.com/codepr
-
-  * quantumcore  
-    https://github.com/quantumcore
-    
+    https://github.com/Mebus/
 

@@ -4,3 +4,6 @@
 .vscode/
 dictionaries/
 .coverage
+
+rename_script.py
+test_hashforge.py
